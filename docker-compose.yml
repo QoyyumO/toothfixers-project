@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+
+  database:
+    container_name: postgres-toothfixer
+    image: postgres:latest
+    ports:
+      - "5433:5432"
+    volumes:
+      - C:\Users\Ayomide/data/postgres/toothfixer:/data/postgres
+    env_file:
+      - toothfixer.env
+
+      
