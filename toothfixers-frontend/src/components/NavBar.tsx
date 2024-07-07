@@ -9,7 +9,9 @@ const NavBar: React.FC = () => {
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center">
           <img src="/src/assets/logo.png" alt="ToothFixers Logo" className="h-10 mr-2" />
-          <span className="text-xl font-bold">ToothFixers</span>
+          <Link to="/" className="text-xl font-bold">
+            ToothFixers
+          </Link>
         </div>
         <ul className="flex space-x-4">
           <li>
