@@ -49,7 +49,7 @@ const EditClinicalRecord: React.FC = () => {
     e.preventDefault();
     try {
       await updateRecord(Number(id), formData);
-      navigate(`/records/${id}`);
+      navigate(`/records`);
     } catch (error) {
       setError(`Error updating record with ID ${id}`);
     }

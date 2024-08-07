@@ -1,23 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { getRecords, deleteRecord } from '../services/clinicalRecordService';
 
 const ClinicalRecordDetails: React.FC = () => {
   const [records, setRecords] = useState<any[]>([]);
-  const [searchId, setSearchId] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchRecords = async () => {
       try {
         const recordsData = await getRecords();
         console.log('Fetched records:', recordsData); // Log the records
-        
+
         // Sort records by ID
         recordsData.sort((a: any, b: any) => a.id - b.id);
-        
+
         // Assign displayId sequentially
         const updatedRecords = recordsData.map((record: any, index: number) => ({
           ...record,
@@ -36,12 +35,6 @@ const ClinicalRecordDetails: React.FC = () => {
     fetchRecords();
   }, []);
 
-  const handleSearch = () => {
-    if (searchId.trim() !== '') {
-      navigate(`/records/${searchId}`);
-    }
-  };
-
   const handleDelete = async (recordId: number) => {
     try {
       await deleteRecord(recordId);
@@ -51,6 +44,10 @@ const ClinicalRecordDetails: React.FC = () => {
       setError('Error deleting record. Please try again later.');
     }
   };
+
+  const filteredRecords = records.filter(record =>
+    record.patient && `${record.patient.firstName} ${record.patient.lastName}`.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   if (loading) {
     return <div>Loading...</div>;
@@ -66,17 +63,11 @@ const ClinicalRecordDetails: React.FC = () => {
         <div>
           <input
             type="text"
-            value={searchId}
-            onChange={(e) => setSearchId(e.target.value)}
-            placeholder="Enter Record ID"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Enter Patient Name"
             className="px-3 py-2 border border-gray-300 rounded-lg"
           />
-          <button
-            onClick={handleSearch}
-            className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none"
-          >
-            Search
-          </button>
         </div>
         <Link
           to="/records/create"
@@ -87,8 +78,8 @@ const ClinicalRecordDetails: React.FC = () => {
       </div>
       <h2 className="text-2xl font-bold mb-4">Records List</h2>
       <div className="space-y-4">
-        {records.length > 0 ? (
-          records.map(record => (
+        {filteredRecords.length > 0 ? (
+          filteredRecords.map(record => (
             <div key={record.id} className="border p-4">
               <div className="flex justify-between items-center mb-2">
                 <Link to={`/records/${record.id}`}>
